@@ -41,10 +41,10 @@ class Maze:
 			self.get_cell_at(current_location).visited = True
 			self.get_cell_at(current_location).is_walkable = True
 			while len(unvisited_neighbor_locations) > 0:
-				new_location = unvisited_neighbor_locations[random.randint(0, len(unvisited_neighbor_locations))]
+				new_location = unvisited_neighbor_locations[random.randrange(0, len(unvisited_neighbor_locations))]
 				self.get_cell_at(new_location).visited = True
 				self.get_cell_at(new_location).is_walkable = True
-				location_difference = ((new_location[0] - current_location[0]) / 2, (new_location[1] - current_location[1]) / 2)
+				location_difference = (int((new_location[0] - current_location[0]) / 2), int((new_location[1] - current_location[1]) / 2))
 				intermediate_location = (current_location[0] + location_difference[0], current_location[1] + location_difference[1])
 				self.get_cell_at(intermediate_location).visited = True
 				self.get_cell_at(intermediate_location).is_walkable = True
@@ -58,7 +58,7 @@ class Maze:
 					if self.get_cell_at(hunt_location).visited:
 						unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(hunt_location) if not self.get_cell_at(location).visited]
 						if len(unvisited_neighbor_locations) > 0:
-							current_location = unvisited_neighbor_locations[random.randint(0, len(unvisited_neighbor_locations))]
+							current_location = unvisited_neighbor_locations[random.randrange(0, len(unvisited_neighbor_locations))]
 							unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(current_location) if not self.get_cell_at(location).visited]
 							break;
 				if current_location != None:
@@ -94,4 +94,5 @@ if __name__ == "__main__":
 		save_location = sys.argv[3]
 	print(f"Generating a maze of width {width} and height {height} to {save_location}.")
 	maze = Maze(width, height)
+	# TODO: visualize maze
 	# TODO: save maze to argv[3]
