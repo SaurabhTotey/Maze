@@ -13,10 +13,13 @@ class MazeCell:
 class Maze:
 
 	def __init__(self, width: int, height: int):
+		#Simple fields
 		self.width: int = width
 		self.height: int = height
 		self.start_location: tuple[int, int] = (1, 1)
 		self.cells: list[list[MazeCell]] = [[MazeCell() for _ in range(width)] for _ in range(height)]
+
+		#Gets the locations of the necessarily traversable cells
 		self.traversable_locations: set[tuple[int, int]] = set([self.start_location])
 		new_traversable_locations = self.get_traversable_locations_adjacent_to(self.start_location)
 		while len(new_traversable_locations) > 0:
@@ -27,6 +30,9 @@ class Maze:
 				self.traversable_locations.add(new_traversable_location)
 				traversable_locations_to_get_adjacencies_of.append(new_traversable_location)
 			new_traversable_locations = list(chain.from_iterable([self.get_traversable_locations_adjacent_to(location) for location in traversable_locations_to_get_adjacencies_of]))
+
+		#Generates the maze using the Hunt and Kill algorithm
+		#TODO:
 
 	def __repr__(self):
 		return "\n".join(["".join([repr(cell) for cell in row]) for row in self.cells])
@@ -46,11 +52,6 @@ class Maze:
 	def get_cell_at(self, location: tuple[int, int]) -> MazeCell:
 		return self.cells[location[1]][location[0]]
 
-def generate_hunt_and_kill_maze(width, height) -> Maze:
-	maze = Maze(width, height)
-	# TODO:
-	return maze
-
 if __name__ == "__main__":
 	width, height = 50, 50
 	save_location = "map.txt"
@@ -61,4 +62,5 @@ if __name__ == "__main__":
 	if len(sys.argv) > 3:
 		save_location = sys.argv[3]
 	print(f"Generating a maze of width {width} and height {height} to {save_location}.")
-	maze = generate_hunt_and_kill_maze(width, height)
+	maze = Maze(width, height)
+	# TODO: save maze to argv[3]
