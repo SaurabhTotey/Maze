@@ -1,3 +1,4 @@
+import random
 import sys
 from itertools import chain
 
@@ -32,7 +33,37 @@ class Maze:
 			new_traversable_locations = list(chain.from_iterable([self.get_traversable_locations_adjacent_to(location) for location in traversable_locations_to_get_adjacencies_of]))
 
 		#Generates the maze using the Hunt and Kill algorithm
-		#TODO:
+		current_location = self.start_location
+		unvisited_neighbor_locations = self.get_traversable_locations_adjacent_to(current_location)
+		hunt_y = 1
+		while current_location != None:
+			#Random walk
+			self.get_cell_at(current_location).visited = True
+			self.get_cell_at(current_location).is_walkable = True
+			while len(unvisited_neighbor_locations) > 0:
+				new_location = unvisited_neighbor_locations[random.randint(0, len(unvisited_neighbor_locations))]
+				self.get_cell_at(new_location).visited = True
+				self.get_cell_at(new_location).is_walkable = True
+				location_difference = ((new_location[0] - current_location[0]) / 2, (new_location[1] - current_location[1]) / 2)
+				intermediate_location = (current_location[0] + location_difference[0], current_location[1] + location_difference[1])
+				self.get_cell_at(intermediate_location).visited = True
+				self.get_cell_at(intermediate_location).is_walkable = True
+				current_location = new_location
+				unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(current_location) if not self.get_cell_at(location).visited]
+			#Hunt for new starting position
+			current_location = None
+			while hunt_y < self.height:
+				for hunt_x in range(1, self.width, 2):
+					hunt_location = (hunt_x, hunt_y)
+					if self.get_cell_at(hunt_location).visited:
+						unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(hunt_location) if not self.get_cell_at(location).visited]
+						if len(unvisited_neighbor_locations) > 0:
+							current_location = unvisited_neighbor_locations[random.randint(0, len(unvisited_neighbor_locations))]
+							unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(current_location) if not self.get_cell_at(location).visited]
+							break;
+				if current_location != None:
+					break
+				hunt_y += 1
 
 	def __repr__(self):
 		return "\n".join(["".join([repr(cell) for cell in row]) for row in self.cells])
