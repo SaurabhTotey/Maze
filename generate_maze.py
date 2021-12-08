@@ -63,7 +63,7 @@ class Maze:
 							break;
 				if current_location != None:
 					break
-				hunt_y += 1
+				hunt_y += 2
 
 	def __repr__(self):
 		return "\n".join(["".join([repr(cell) for cell in row]) for row in self.cells])
@@ -84,7 +84,7 @@ class Maze:
 		return self.cells[location[1]][location[0]]
 
 if __name__ == "__main__":
-	width, height = 50, 50
+	width, height = 51, 51
 	save_location = "map.txt"
 	if len(sys.argv) > 2:
 		width, height = sys.argv[1], sys.argv[2]
@@ -94,5 +94,6 @@ if __name__ == "__main__":
 		save_location = sys.argv[3]
 	print(f"Generating a maze of width {width} and height {height} to {save_location}.")
 	maze = Maze(width, height)
+	print(maze)
 	# TODO: visualize maze
 	# TODO: save maze to argv[3]
