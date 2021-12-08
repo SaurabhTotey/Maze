@@ -85,15 +85,19 @@ class Maze:
 
 if __name__ == "__main__":
 	width, height = 51, 51
+	maze_seed = int(random.random() * 1000)
 	save_location = "map.txt"
 	if len(sys.argv) > 2:
-		width, height = sys.argv[1], sys.argv[2]
+		width, height = int(sys.argv[1]), int(sys.argv[2])
 	elif len(sys.argv) > 1:
-		width, height = sys.argv[1], sys.argv[1]
+		width, height = int(sys.argv[1]), int(sys.argv[1])
 	if len(sys.argv) > 3:
-		save_location = sys.argv[3]
-	print(f"Generating a maze of width {width} and height {height} to {save_location}.")
+		maze_seed = int(sys.argv[3])
+	if len(sys.argv) > 4:
+		save_location = sys.argv[4]
+	print(f"Generating a maze of width {width} and height {height} to {save_location} using the seed {maze_seed}.")
+	random.seed(maze_seed)
 	maze = Maze(width, height)
 	print(maze)
 	# TODO: visualize maze
-	# TODO: save maze to argv[3]
+	# TODO: save maze to save_location
