@@ -1,6 +1,7 @@
 import random
 import sys
 from itertools import chain
+import matplotlib.pyplot as plt
 
 class MazeCell:
 
@@ -84,9 +85,12 @@ class Maze:
 		return self.cells[location[1]][location[0]]
 
 if __name__ == "__main__":
+	#Default values
 	width, height = 51, 51
 	maze_seed = int(random.random() * 1000)
 	save_location = "map.txt"
+
+	#Read desired user values from program arguments
 	if len(sys.argv) > 2:
 		width, height = int(sys.argv[1]), int(sys.argv[2])
 	elif len(sys.argv) > 1:
@@ -95,9 +99,16 @@ if __name__ == "__main__":
 		maze_seed = int(sys.argv[3])
 	if len(sys.argv) > 4:
 		save_location = sys.argv[4]
+
+	#Generate maze
 	print(f"Generating a maze of width {width} and height {height} to {save_location} using the seed {maze_seed}.")
 	random.seed(maze_seed)
 	maze = Maze(width, height)
-	print(maze)
-	# TODO: visualize maze
+	maze_string = repr(maze)
+
+	#Visualize the maze
+	maze_array = [[int(cell_char) for cell_char in line] for line in maze_string.split("\n")]
+	plt.imshow(maze_array)
+	plt.show()
+
 	# TODO: save maze to save_location
