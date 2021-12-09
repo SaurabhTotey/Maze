@@ -21,18 +21,6 @@ class Maze:
 		self.start_location: tuple[int, int] = (1, 1)
 		self.cells: list[list[MazeCell]] = [[MazeCell() for _ in range(width)] for _ in range(height)]
 
-		#Gets the locations of the necessarily traversable cells
-		self.traversable_locations: set[tuple[int, int]] = set([self.start_location])
-		new_traversable_locations = self.get_traversable_locations_adjacent_to(self.start_location)
-		while len(new_traversable_locations) > 0:
-			traversable_locations_to_get_adjacencies_of = []
-			for new_traversable_location in new_traversable_locations:
-				if new_traversable_location in self.traversable_locations:
-					continue
-				self.traversable_locations.add(new_traversable_location)
-				traversable_locations_to_get_adjacencies_of.append(new_traversable_location)
-			new_traversable_locations = list(chain.from_iterable([self.get_traversable_locations_adjacent_to(location) for location in traversable_locations_to_get_adjacencies_of]))
-
 		#Generates the maze using the Hunt and Kill algorithm
 		current_location = self.start_location
 		unvisited_neighbor_locations = self.get_traversable_locations_adjacent_to(current_location)
