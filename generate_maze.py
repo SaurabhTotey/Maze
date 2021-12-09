@@ -3,15 +3,6 @@ import sys
 from itertools import chain
 import matplotlib.pyplot as plt
 
-class MazeCell:
-
-	def __init__(self):
-		self.visited: bool = False
-		self.is_walkable: bool = False
-
-	def __repr__(self):
-		return str(int(not self.is_walkable))
-
 class Maze:
 
 	def __init__(self, width: int, height: int):
@@ -19,7 +10,7 @@ class Maze:
 		self.width: int = width
 		self.height: int = height
 		self.start_location: tuple[int, int] = (1, 1)
-		self.cells: list[list[MazeCell]] = [[MazeCell() for _ in range(width)] for _ in range(height)]
+		self.cells: list[list[bool]] = [[False for _ in range(width)] for _ in range(height)]
 
 		#Generates the maze using the Hunt and Kill algorithm
 		current_location = self.start_location
@@ -37,7 +28,7 @@ class Maze:
 			while hunt_y < self.height:
 				for hunt_x in range(1, self.width, 2):
 					hunt_location = (hunt_x, hunt_y)
-					if self.get_cell_at(hunt_location).visited:
+					if self.get_cell_at(hunt_location):
 						unvisited_neighbor_locations = self.get_unvisited_main_locations_adjacent_to(hunt_location)
 						if len(unvisited_neighbor_locations) > 0:
 							current_location = unvisited_neighbor_locations[random.randrange(0, len(unvisited_neighbor_locations))]
@@ -49,7 +40,7 @@ class Maze:
 				hunt_y += 2
 
 	def __repr__(self):
-		return "\n".join(["".join([repr(cell) for cell in row]) for row in self.cells])
+		return "\n".join(["".join([str(int(not cell)) for cell in row]) for row in self.cells])
 
 	def is_location_valid(self, location: tuple[int, int]) -> bool:
 		return 0 <= location[0] < self.width and 0 <= location[1] < self.height
@@ -64,11 +55,10 @@ class Maze:
 		return [adjacent_location for adjacent_location in adjacent_locations if self.is_location_valid(adjacent_location)]
 
 	def get_unvisited_main_locations_adjacent_to(self, location: tuple[int, int]) -> list[tuple[int, int]]:
-		return [adjacent_location for adjacent_location in self.get_main_locations_adjacent_to(location) if not self.get_cell_at(adjacent_location).visited]
+		return [adjacent_location for adjacent_location in self.get_main_locations_adjacent_to(location) if not self.get_cell_at(adjacent_location)]
 
 	def carve_location(self, location: tuple[int, int]):
-		self.get_cell_at(location).visited  = True
-		self.get_cell_at(location).is_walkable = True
+		self.cells[location[1]][location[0]] = True
 
 	def carve_path(self, from_location: tuple[int, int], to_location: tuple[int, int]):
 		location_difference = (int((to_location[0] - from_location[0]) / 2), int((to_location[1] - from_location[1]) / 2))
@@ -77,7 +67,7 @@ class Maze:
 		self.carve_location(intermediate_location)
 		self.carve_location(to_location)
 
-	def get_cell_at(self, location: tuple[int, int]) -> MazeCell:
+	def get_cell_at(self, location: tuple[int, int]) -> bool:
 		return self.cells[location[1]][location[0]]
 
 if __name__ == "__main__":
