@@ -15,16 +15,20 @@ def distance_between(from_location: tuple[int, int], to_location: tuple[int, int
 
 def path_plan_a_star(maze: list[list[int]]) -> list[list[list[int]]]:
 	pathfinding_snapshots = []
+	previous_snapshot = copy_with_change(maze, (0, 0), 1)
 	open_list = set([(1, 1)])
 	closed_list = set()
-	location_to_cost = {}
+	location_to_cost = {(1, 1): 0}
 	location_to_parent = {(1, 1): None}
 	while len(open_list) != 0:
 		current_location = min(open_list, key=lambda location: location_to_cost[location])
+		previous_snapshot = copy_with_change(previous_snapshot, current_location, 5)
+		pathfinding_snapshots += [previous_snapshot]
 		open_list.remove(current_location)
 		closed_list.add(current_location)
 		if current_location == (17, 17):
-			pass # TODO:
+			# TODO: backtracking
+			return pathfinding_snapshots
 		neighbors = [
 			(current_location[0], current_location[1] - 1),
 			(current_location[0], current_location[1] + 1),
@@ -39,9 +43,11 @@ def path_plan_a_star(maze: list[list[int]]) -> list[list[list[int]]]:
 			neighbor_cost = location_to_cost[current_location] + 1 + distance_between(neighbor, (17, 17))
 			if neighbor in open_list and neighbor_cost > location_to_cost[neighbor]:
 				continue
+			pathfinding_snapshots += [copy_with_change(previous_snapshot, neighbor, 4)]
 			location_to_cost[neighbor] = neighbor_cost
 			location_to_parent[neighbor] = current_location
 			open_list.add(neighbor)
+		previous_snapshot = copy_with_change(previous_snapshot, current_location, 6)
 	return pathfinding_snapshots
 
 if __name__ == "__main__":
@@ -51,7 +57,7 @@ if __name__ == "__main__":
 		maze = [[int(map_char) for map_char in line.strip()] for line in file.readlines()]
 
 	#Set plotting colors
-	colors = ["white", "black", "green", "red", "gray", "yellow"]
+	colors = ["white", "black", "green", "red", "cyan", "pink", "gray", "yellow"]
 	colormap = ListedColormap(colors)
 
 	#Mark starts and ends
