@@ -13,25 +13,25 @@ def copy_with_change(maze: list[list[int]], location: tuple[int, int], new_value
 def distance_between(from_location: tuple[int, int], to_location: tuple[int, int]) -> float:
 	return math.sqrt((from_location[0] - to_location[0]) ** 2 + (from_location[1] - to_location[1]) ** 2)
 
-def path_plan_a_star(maze: list[list[int]]) -> list[list[list[int]]]:
+def path_plan_a_star(maze: list[list[int]], start_location: tuple[int, int], end_location: tuple[int, int]) -> list[list[list[int]]]:
 	pathfinding_snapshots = []
-	previous_snapshot = copy_with_change(maze, (0, 0), 1)
-	open_list = set([(1, 1)])
+	previous_snapshot = copy_with_change(maze, (-1, -1), 0)
+	open_list = set([start_location])
 	closed_list = set()
-	location_to_cost = {(1, 1): 0}
-	location_to_parent = {(1, 1): None}
+	location_to_cost = {start_location: 0}
+	location_to_parent = {start_location: None}
 	while len(open_list) != 0:
 		current_location = min(open_list, key=lambda location: location_to_cost[location])
 		previous_snapshot = copy_with_change(previous_snapshot, current_location, 5)
 		pathfinding_snapshots += [previous_snapshot]
 		open_list.remove(current_location)
 		closed_list.add(current_location)
-		if current_location == (17, 17):
-			while current_location != (1, 1):
+		if current_location == end_location:
+			while current_location != start_location:
 				previous_snapshot = copy_with_change(previous_snapshot, current_location, 7)
 				pathfinding_snapshots += [previous_snapshot]
 				current_location = location_to_parent[current_location]
-			pathfinding_snapshots += [copy_with_change(previous_snapshot, (1, 1), 7)]
+			pathfinding_snapshots += [copy_with_change(previous_snapshot, start_location, 7)]
 			return pathfinding_snapshots
 		neighbors = [
 			(current_location[0], current_location[1] - 1),
@@ -44,7 +44,7 @@ def path_plan_a_star(maze: list[list[int]]) -> list[list[list[int]]]:
 		for neighbor in neighbors:
 			if neighbor in closed_list:
 				continue
-			neighbor_cost = location_to_cost[current_location] + 1 + distance_between(neighbor, (17, 17))
+			neighbor_cost = location_to_cost[current_location] + 1 + distance_between(neighbor, end_location)
 			if neighbor in open_list and neighbor_cost > location_to_cost[neighbor]:
 				continue
 			pathfinding_snapshots += [copy_with_change(previous_snapshot, neighbor, 4)]
@@ -65,10 +65,14 @@ if __name__ == "__main__":
 	colormap = ListedColormap(colors)
 
 	#Mark starts and ends
-	initial_state = copy_with_change(copy_with_change(maze, (1, 1), 2), (17, 17), 3)
+	maze_height = len(maze)
+	maze_width = len(maze[0])
+	start_location = (1, 1)
+	end_location = (maze_width - 2, maze_height - 2)
+	initial_state = copy_with_change(copy_with_change(maze, start_location, 2), end_location, 3)
 
 	#Show animation
-	states = [initial_state] + path_plan_a_star(maze)
+	states = [initial_state] + path_plan_a_star(maze, start_location, end_location)
 	figure = plt.figure()
 	image_show = plt.imshow(maze, cmap=colormap, norm=BoundaryNorm(range(len(colors) + 1), len(colors)))
 	def animation_function(frame_index):
