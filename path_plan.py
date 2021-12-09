@@ -2,8 +2,15 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
+def copy_with_change(maze: list[list[int]], location: tuple[int, int], new_value: int) -> list[list[int]]:
+	return [
+		[
+			new_value if x == location[0] and y == location[1] else maze[y][x] for x in range(len(maze[y]))
+		] for y in range(len(maze))
+	]
+
 def path_plan_a_star(maze: list[list[int]]) -> list[list[list[int]]]:
-	return [[[4 for _ in range(19)] for _ in range(19)], [[5 for _ in range(19)] for _ in range(19)]]
+	return [copy_with_change(maze, (13, 13), 4), copy_with_change(maze, (13, 13), 2), copy_with_change(maze, (13, 13), 5)]
 
 if __name__ == "__main__":
 	#Read maze
