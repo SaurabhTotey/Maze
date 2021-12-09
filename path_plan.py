@@ -39,7 +39,7 @@ def path_plan_a_star(maze: list[list[int]], start_location: tuple[int, int], end
 			(current_location[0] - 1, current_location[1]),
 			(current_location[0] + 1, current_location[1])
 		]
-		neighbors = [neighbor for neighbor in neighbors if 0 <= neighbor[0] < 19 and 0 <= neighbor[1] < 19]
+		neighbors = [neighbor for neighbor in neighbors if 0 <= neighbor[0] < len(maze[0]) and 0 <= neighbor[1] < len(maze)]
 		neighbors = [neighbor for neighbor in neighbors if maze[neighbor[1]][neighbor[0]] != 1]
 		for neighbor in neighbors:
 			if neighbor in closed_list:
