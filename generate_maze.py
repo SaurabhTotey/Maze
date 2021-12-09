@@ -23,36 +23,26 @@ class Maze:
 
 		#Generates the maze using the Hunt and Kill algorithm
 		current_location = self.start_location
-		unvisited_neighbor_locations = self.get_traversable_locations_adjacent_to(current_location)
+		unvisited_neighbor_locations = self.get_main_locations_adjacent_to(current_location)
 		hunt_y = 1
 		while current_location != None:
 			#Random walk
-			self.get_cell_at(current_location).visited = True
-			self.get_cell_at(current_location).is_walkable = True
 			while len(unvisited_neighbor_locations) > 0:
 				new_location = unvisited_neighbor_locations[random.randrange(0, len(unvisited_neighbor_locations))]
-				self.get_cell_at(new_location).visited = True
-				self.get_cell_at(new_location).is_walkable = True
-				location_difference = (int((new_location[0] - current_location[0]) / 2), int((new_location[1] - current_location[1]) / 2))
-				intermediate_location = (current_location[0] + location_difference[0], current_location[1] + location_difference[1])
-				self.get_cell_at(intermediate_location).visited = True
-				self.get_cell_at(intermediate_location).is_walkable = True
+				self.carve_path(current_location, new_location)
 				current_location = new_location
-				unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(current_location) if not self.get_cell_at(location).visited]
+				unvisited_neighbor_locations = self.get_unvisited_main_locations_adjacent_to(current_location)
 			#Hunt for new starting position
 			current_location = None
 			while hunt_y < self.height:
 				for hunt_x in range(1, self.width, 2):
 					hunt_location = (hunt_x, hunt_y)
 					if self.get_cell_at(hunt_location).visited:
-						unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(hunt_location) if not self.get_cell_at(location).visited]
+						unvisited_neighbor_locations = self.get_unvisited_main_locations_adjacent_to(hunt_location)
 						if len(unvisited_neighbor_locations) > 0:
 							current_location = unvisited_neighbor_locations[random.randrange(0, len(unvisited_neighbor_locations))]
-							location_difference = (int((current_location[0] - hunt_location[0]) / 2), int((current_location[1] - hunt_location[1]) / 2))
-							intermediate_location = (hunt_location[0] + location_difference[0], hunt_location[1] + location_difference[1])
-							self.get_cell_at(intermediate_location).visited = True
-							self.get_cell_at(intermediate_location).is_walkable = True
-							unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(current_location) if not self.get_cell_at(location).visited]
+							self.carve_path(hunt_location, current_location)
+							unvisited_neighbor_locations = self.get_unvisited_main_locations_adjacent_to(current_location)
 							break;
 				if current_location != None:
 					break
@@ -64,7 +54,7 @@ class Maze:
 	def is_location_valid(self, location: tuple[int, int]) -> bool:
 		return 0 <= location[0] < self.width and 0 <= location[1] < self.height
 
-	def get_traversable_locations_adjacent_to(self, location: tuple[int, int]) -> list[tuple[int, int]]:
+	def get_main_locations_adjacent_to(self, location: tuple[int, int]) -> list[tuple[int, int]]:
 		adjacent_locations = [
 			(location[0], location[1] - 2),
 			(location[0], location[1] + 2),
@@ -72,6 +62,20 @@ class Maze:
 			(location[0] + 2, location[1])
 		]
 		return [adjacent_location for adjacent_location in adjacent_locations if self.is_location_valid(adjacent_location)]
+
+	def get_unvisited_main_locations_adjacent_to(self, location: tuple[int, int]) -> list[tuple[int, int]]:
+		return [adjacent_location for adjacent_location in self.get_main_locations_adjacent_to(location) if not self.get_cell_at(adjacent_location).visited]
+
+	def carve_location(self, location: tuple[int, int]):
+		self.get_cell_at(location).visited  = True
+		self.get_cell_at(location).is_walkable = True
+
+	def carve_path(self, from_location: tuple[int, int], to_location: tuple[int, int]):
+		location_difference = (int((to_location[0] - from_location[0]) / 2), int((to_location[1] - from_location[1]) / 2))
+		intermediate_location = (from_location[0] + location_difference[0], from_location[1] + location_difference[1])
+		self.carve_location(from_location)
+		self.carve_location(intermediate_location)
+		self.carve_location(to_location)
 
 	def get_cell_at(self, location: tuple[int, int]) -> MazeCell:
 		return self.cells[location[1]][location[0]]
