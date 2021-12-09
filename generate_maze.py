@@ -60,6 +60,10 @@ class Maze:
 						unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(hunt_location) if not self.get_cell_at(location).visited]
 						if len(unvisited_neighbor_locations) > 0:
 							current_location = unvisited_neighbor_locations[random.randrange(0, len(unvisited_neighbor_locations))]
+							location_difference = (int((current_location[0] - hunt_location[0]) / 2), int((current_location[1] - hunt_location[1]) / 2))
+							intermediate_location = (hunt_location[0] + location_difference[0], hunt_location[1] + location_difference[1])
+							self.get_cell_at(intermediate_location).visited = True
+							self.get_cell_at(intermediate_location).is_walkable = True
 							unvisited_neighbor_locations = [location for location in self.get_traversable_locations_adjacent_to(current_location) if not self.get_cell_at(location).visited]
 							break;
 				if current_location != None:
