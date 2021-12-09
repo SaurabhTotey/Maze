@@ -74,5 +74,5 @@ if __name__ == "__main__":
 	def animation_function(frame_index):
 		image_show.set_array(states[frame_index])
 		return [image_show]
-	animation = animation.FuncAnimation(figure, animation_function, frames=len(states), interval=17)
+	animation = animation.FuncAnimation(figure, animation_function, frames=len(states), interval=64, repeat=False)
 	plt.show()
