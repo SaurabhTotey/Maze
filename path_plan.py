@@ -27,7 +27,11 @@ def path_plan_a_star(maze: list[list[int]]) -> list[list[list[int]]]:
 		open_list.remove(current_location)
 		closed_list.add(current_location)
 		if current_location == (17, 17):
-			# TODO: backtracking
+			while current_location != (1, 1):
+				previous_snapshot = copy_with_change(previous_snapshot, current_location, 7)
+				pathfinding_snapshots += [previous_snapshot]
+				current_location = location_to_parent[current_location]
+			pathfinding_snapshots += [copy_with_change(previous_snapshot, (1, 1), 7)]
 			return pathfinding_snapshots
 		neighbors = [
 			(current_location[0], current_location[1] - 1),
@@ -70,5 +74,5 @@ if __name__ == "__main__":
 	def animation_function(frame_index):
 		image_show.set_array(states[frame_index])
 		return [image_show]
-	animation = animation.FuncAnimation(figure, animation_function, frames=len(states))
+	animation = animation.FuncAnimation(figure, animation_function, frames=len(states), interval=17)
 	plt.show()
