@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
 	#Visualize the maze
 	maze_array = [[int(cell_char) for cell_char in line] for line in maze_string.split("\n")]
-	plt.imshow(maze_array)
+	plt.imshow(maze_array, cmap="Greys")
 	plt.show()
 
 	#Save maze
