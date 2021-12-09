@@ -111,4 +111,6 @@ if __name__ == "__main__":
 	plt.imshow(maze_array)
 	plt.show()
 
-	# TODO: save maze to save_location
+	#Save maze
+	with open(save_location, "w") as file:
+		file.write(maze_string)
