@@ -1,8 +1,9 @@
 import math
+import sys
+import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+from matplotlib.animation import FuncAnimation
 from matplotlib.colors import ListedColormap, BoundaryNorm
-from matplotlib import rcParams
 
 def copy_with_change(maze: list[list[int]], location: tuple[int, int], new_value: int) -> list[list[int]]:
 	return [
@@ -55,31 +56,42 @@ def path_plan_a_star(maze: list[list[int]], start_location: tuple[int, int], end
 		previous_snapshot = copy_with_change(previous_snapshot, current_location, 6)
 	return pathfinding_snapshots
 
-if __name__ == "__main__":
-	#Read maze
-	maze = None
-	with open("map.txt", "r") as file:
-		maze = [[int(map_char) for map_char in line.strip()] for line in file.readlines()]
-
+def animate_a_star(maze: list[list[int]], output_location: str):
 	#Set plotting colors
 	colors = ["white", "black", "green", "red", "cyan", "pink", "gray", "yellow"]
 	colormap = ListedColormap(colors)
 
-	#Mark starts and ends
+	#Gets starts and ends
 	maze_height = len(maze)
 	maze_width = len(maze[0])
 	start_location = (1, 1)
 	end_location = (maze_width - 2, maze_height - 2)
-	initial_state = copy_with_change(copy_with_change(maze, start_location, 2), end_location, 3)
 
-	#Show animation
-	states = [initial_state] + path_plan_a_star(maze, start_location, end_location)
+	#Show and Save animation
+	states = [maze] + path_plan_a_star(maze, start_location, end_location)
 	figure = plt.figure()
 	image_show = plt.imshow(maze, cmap=colormap, norm=BoundaryNorm(range(len(colors) + 1), len(colors)))
 	def animation_function(frame_index):
 		image_show.set_array(states[frame_index])
 		return [image_show]
-	animation = animation.FuncAnimation(figure, animation_function, frames=len(states), interval=64, repeat=False)
+	animation = FuncAnimation(figure, animation_function, frames=len(states), interval=64, repeat=False)
 	plt.show()
-	rcParams["animation.convert_path"] = r"/usr/bin/convert"
-	animation.save("Path.gif", writer="imagemagick")
+	matplotlib.rcParams["animation.convert_path"] = r"/usr/bin/convert"
+	animation.save(output_location, writer="imagemagick")
+
+if __name__ == "__main__":
+	#Default values
+	maze_file = "map.txt"
+	animation_save_location = "PathAnimation.gif"
+
+	#Read desired user values from program arguments
+	if len(sys.argv) > 1:
+		maze_file = sys.argv[1]
+	if len(sys.argv) > 2:
+		animation_save_location = sys.argv[2]
+
+	#Read maze and generate the animation
+	maze = None
+	with open(maze_file, "r") as file:
+		maze = [[int(map_char) for map_char in line.strip()] for line in file.readlines()]
+	animate_a_star(maze, animation_save_location)
