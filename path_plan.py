@@ -82,4 +82,4 @@ if __name__ == "__main__":
 	animation = animation.FuncAnimation(figure, animation_function, frames=len(states), interval=64, repeat=False)
 	plt.show()
 	rcParams["animation.convert_path"] = r"/usr/bin/convert"
-	animation.save("Example.gif", writer="imagemagick")
+	animation.save("Path.gif", writer="imagemagick")

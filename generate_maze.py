@@ -86,6 +86,10 @@ if __name__ == "__main__":
 	if len(sys.argv) > 4:
 		save_location = sys.argv[4]
 
+	if width % 2 == 0 or height % 2 == 0:
+		print("Cannot generate a maze with an even width or height.")
+		exit()
+
 	#Generate maze
 	print(f"Generating a maze of width {width} and height {height} to {save_location} using the seed {maze_seed}.")
 	random.seed(maze_seed)
