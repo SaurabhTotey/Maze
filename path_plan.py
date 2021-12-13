@@ -2,6 +2,7 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.colors import ListedColormap, BoundaryNorm
+from matplotlib import rcParams
 
 def copy_with_change(maze: list[list[int]], location: tuple[int, int], new_value: int) -> list[list[int]]:
 	return [
@@ -80,3 +81,5 @@ if __name__ == "__main__":
 		return [image_show]
 	animation = animation.FuncAnimation(figure, animation_function, frames=len(states), interval=64, repeat=False)
 	plt.show()
+	rcParams["animation.convert_path"] = r"/usr/bin/convert"
+	animation.save("Example.gif", writer="imagemagick")
