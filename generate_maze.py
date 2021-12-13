@@ -86,6 +86,7 @@ if __name__ == "__main__":
 	if len(sys.argv) > 4:
 		save_location = sys.argv[4]
 
+	#Check that width and height are indeed odd
 	if width % 2 == 0 or height % 2 == 0:
 		print("Cannot generate a maze with an even width or height.")
 		exit()
